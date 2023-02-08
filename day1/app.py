@@ -16,4 +16,4 @@ print("\U0001F602")
 with open("data.txt", mode='w') as file:
     print("Hello!", "Nice to meet you!", file=file)
 print("Hello", "how are you?", sep="---")  # dash
-# Cmd + Alt + L
+# SHIFT + Opt + F
