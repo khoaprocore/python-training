@@ -3,14 +3,14 @@ import pygame
 import sys
 from pygame.locals import *
 
-FPS = 25 # frames per second, the general speed of the program
+FPS = 30 # frames per second, the general speed of the program
 WINDOW_WIDTH = 640 # size of window's width in pixels
 WINDOW_HEIGHT = 480 # size of window's height in pixels
 REVEAL_SPEED = 8 # speed boxes's sliding reveals and covers
 BOX_SIZE = 40 # size of box height & width in pixels
 GAP_SIZE = 10 # size of gap between boxes in pixels
 BOARD_WIDTH = 10 # number of columns of icons
-BOARD_HEIGHT = 5 # number of rows of icons
+BOARD_HEIGHT = 7 # number of rows of icons
 
 assert (BOARD_WIDTH * BOARD_HEIGHT) % 2 == 0, "Board needs to have a even number of boxes for pairs of matches."
 
@@ -28,7 +28,6 @@ YELLOW      = (255, 255, 0)
 ORANGE      = (255, 128, 0)
 PURPLE      = (255, 0,   255)
 CYAN        = (0,   255, 255)
-BROWN       = (101, 26,  26)
 
 BG_COLOR    = NAVY_BLUE
 LIGHT_BG_COLOR = GRAY
@@ -41,8 +40,7 @@ DIAMOND = 'diamond'
 LINES = 'lines'
 OVAL = 'oval'
 
-
-ALL_COLORS = (RED, GREEN, BLUE, YELLOW, ORANGE, PURPLE, CYAN, BROWN)
+ALL_COLORS = (RED, GREEN, BLUE, YELLOW, ORANGE, PURPLE, CYAN)
 ALL_SHAPES = (DONUT, SQUARE, DIAMOND, LINES, OVAL)
 
 assert len(ALL_COLORS) * len(ALL_SHAPES) * 2 >= BOARD_WIDTH * BOARD_HEIGHT, "Board is too big for the number of shapes/colors defined."
