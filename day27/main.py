@@ -61,3 +61,6 @@ print(goose_filter(["Mallard", "Hook Bill", "African", "Crested", "Pilgrim", "To
 print(is_anagram("foefet", "toffee") == True) """
 
 print([[1, 2] * 2] * 3)
+
+
+
