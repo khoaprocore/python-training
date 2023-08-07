@@ -1,16 +1,14 @@
 import pygame, sys, random
 from pygame.locals import *
 
-# Create the constants (go ahead and experiment with different values)
-BOARDWIDTH = 4  # number of columns in the board
-BOARDHEIGHT = 4 # number of rows in the board
+BOARDWIDTH = 4
+BOARDHEIGHT = 4
 TILESIZE = 80
 WINDOWWIDTH = 640
 WINDOWHEIGHT = 480
 FPS = 70
 BLANK = None
 
-#                 R    G    B
 BLACK =         (  0,   0,   0)
 WHITE =         (255, 255, 255)
 BRIGHTBLUE =    (  0,  50, 255)
@@ -44,42 +42,38 @@ def main():
     pygame.display.set_caption('Slide Puzzle')
     BASICFONT = pygame.font.Font('freesansbold.ttf', BASICFONTSIZE)
 
-    # Store the option buttons and their rectangles in OPTIONS.
     RESET_SURF, RESET_RECT = makeText('Reset',    TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 90)
     NEW_SURF,   NEW_RECT   = makeText('New Game', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 60)
     SOLVE_SURF, SOLVE_RECT = makeText('Solve',    TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 30)
 
     mainBoard, solutionSeq = generateNewPuzzle(80)
-    SOLVEDBOARD = getStartingBoard() # a solved board is the same as the board in a start state.
-    allMoves = [] # list of moves made from the solved configuration
+    SOLVEDBOARD = getStartingBoard()
+    allMoves = []
 
-    while True: # main game loop
-        slideTo = None # the direction, if any, a tile should slide
-        msg = 'Click tile or press arrow keys to slide.' # contains the message to show in the upper left corner.
+    while True:
+        slideTo = None
+        msg = 'Click tile or press arrow keys to slide.'
         if mainBoard == SOLVEDBOARD:
             msg = 'Solved!'
 
         drawBoard(mainBoard, msg)
 
         checkForQuit()
-        for event in pygame.event.get(): # event handling loop
+        for event in pygame.event.get():
             if event.type == MOUSEBUTTONUP:
                 spotx, spoty = getSpotClicked(mainBoard, event.pos[0], event.pos[1])
 
                 if (spotx, spoty) == (None, None):
-                    # check if the user clicked on an option button
                     if RESET_RECT.collidepoint(event.pos):
-                        resetAnimation(mainBoard, allMoves) # clicked on Reset button
+                        resetAnimation(mainBoard, allMoves)
                         allMoves = []
                     elif NEW_RECT.collidepoint(event.pos):
-                        mainBoard, solutionSeq = generateNewPuzzle(80) # clicked on New Game button
+                        mainBoard, solutionSeq = generateNewPuzzle(80)
                         allMoves = []
                     elif SOLVE_RECT.collidepoint(event.pos):
-                        resetAnimation(mainBoard, solutionSeq + allMoves) # clicked on Solve button
+                        resetAnimation(mainBoard, solutionSeq + allMoves)
                         allMoves = []
                 else:
-                    # check if the clicked tile was next to the blank spot
-
                     blankx, blanky = getBlankPosition(mainBoard)
                     if spotx == blankx + 1 and spoty == blanky:
                         slideTo = LEFT
@@ -89,9 +83,7 @@ def main():
                         slideTo = UP
                     elif spotx == blankx and spoty == blanky - 1:
                         slideTo = DOWN
-
             elif event.type == KEYUP:
-                # check if the user pressed a key to slide a tile
                 if event.key in (K_LEFT, K_a) and isValidMove(mainBoard, LEFT):
                     slideTo = LEFT
                 elif event.key in (K_RIGHT, K_d) and isValidMove(mainBoard, RIGHT):
@@ -102,9 +94,9 @@ def main():
                     slideTo = DOWN
 
         if slideTo:
-            slideAnimation(mainBoard, slideTo, 'Click tile or press arrow keys to slide.', 8) # show slide on screen
+            slideAnimation(mainBoard, slideTo, 'Click tile or press arrow keys to slide.', 8)
             makeMove(mainBoard, slideTo)
-            allMoves.append(slideTo) # record the slide
+            allMoves.append(slideTo)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
@@ -115,18 +107,15 @@ def terminate():
 
 
 def checkForQuit():
-    for event in pygame.event.get(QUIT): # get all the QUIT events
-        terminate() # terminate if any QUIT events are present
-    for event in pygame.event.get(KEYUP): # get all the KEYUP events
+    for event in pygame.event.get(QUIT):
+        terminate()
+    for event in pygame.event.get(KEYUP):
         if event.key == K_ESCAPE:
-            terminate() # terminate if the KEYUP event was for the Esc key
-        pygame.event.post(event) # put the other KEYUP event objects back
+            terminate()
+        pygame.event.post(event)
 
 
 def getStartingBoard():
-    # Return a board data structure with tiles in the solved state.
-    # For example, if BOARDWIDTH and BOARDHEIGHT are both 3, this function
-    # returns [[1, 4, 7], [2, 5, 8], [3, 6, BLANK]]
     counter = 1
     board = []
     for x in range(BOARDWIDTH):
@@ -142,7 +131,6 @@ def getStartingBoard():
 
 
 def getBlankPosition(board):
-    # Return the x and y of board coordinates of the blank space.
     for x in range(BOARDWIDTH):
         for y in range(BOARDHEIGHT):
             if board[x][y] == BLANK:
@@ -150,7 +138,6 @@ def getBlankPosition(board):
 
 
 def makeMove(board, move):
-    # This function does not check if the move is valid.
     blankx, blanky = getBlankPosition(board)
 
     if move == UP:
@@ -172,10 +159,8 @@ def isValidMove(board, move):
 
 
 def getRandomMove(board, lastMove=None):
-    # start with a full list of all four moves
     validMoves = [UP, DOWN, LEFT, RIGHT]
 
-    # remove moves from the list as they are disqualified
     if lastMove == UP or not isValidMove(board, DOWN):
         validMoves.remove(DOWN)
     if lastMove == DOWN or not isValidMove(board, UP):
@@ -185,7 +170,6 @@ def getRandomMove(board, lastMove=None):
     if lastMove == RIGHT or not isValidMove(board, LEFT):
         validMoves.remove(LEFT)
 
-    # return a random move from the list of remaining moves
     return random.choice(validMoves)
 
 
@@ -196,7 +180,6 @@ def getLeftTopOfTile(tileX, tileY):
 
 
 def getSpotClicked(board, x, y):
-    # from the x & y pixel coordinates, get the x & y board coordinates
     for tileX in range(len(board)):
         for tileY in range(len(board[0])):
             left, top = getLeftTopOfTile(tileX, tileY)
@@ -207,8 +190,6 @@ def getSpotClicked(board, x, y):
 
 
 def drawTile(tilex, tiley, number, adjx=0, adjy=0):
-    # draw a tile at board coordinates tilex and tiley, optionally a few
-    # pixels over (determined by adjx and adjy)
     left, top = getLeftTopOfTile(tilex, tiley)
     pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left + adjx, top + adjy, TILESIZE, TILESIZE))
     textSurf = BASICFONT.render(str(number), True, TEXTCOLOR)
@@ -218,7 +199,6 @@ def drawTile(tilex, tiley, number, adjx=0, adjy=0):
 
 
 def makeText(text, color, bgcolor, top, left):
-    # create the Surface and Rect objects for some text.
     textSurf = BASICFONT.render(text, True, color, bgcolor)
     textRect = textSurf.get_rect()
     textRect.topleft = (top, left)
@@ -247,7 +227,6 @@ def drawBoard(board, message):
 
 
 def slideAnimation(board, direction, message, animationSpeed):
-    # Note: This function does not check if the move is valid.
 
     blankx, blanky = getBlankPosition(board)
     if direction == UP:
@@ -263,15 +242,12 @@ def slideAnimation(board, direction, message, animationSpeed):
         movex = blankx - 1
         movey = blanky
 
-    # prepare the base surface
     drawBoard(board, message)
     baseSurf = DISPLAYSURF.copy()
-    # draw a blank space over the moving tile on the baseSurf Surface.
     moveLeft, moveTop = getLeftTopOfTile(movex, movey)
     pygame.draw.rect(baseSurf, BGCOLOR, (moveLeft, moveTop, TILESIZE, TILESIZE))
 
     for i in range(0, TILESIZE, animationSpeed):
-        # animate the tile sliding over
         checkForQuit()
         DISPLAYSURF.blit(baseSurf, (0, 0))
         if direction == UP:
@@ -288,13 +264,11 @@ def slideAnimation(board, direction, message, animationSpeed):
 
 
 def generateNewPuzzle(numSlides):
-    # From a starting configuration, make numSlides number of moves (and
-    # animate these moves).
     sequence = []
     board = getStartingBoard()
     drawBoard(board, '')
     pygame.display.update()
-    pygame.time.wait(500) # pause 500 milliseconds for effect
+    pygame.time.wait(500)
     lastMove = None
     for i in range(numSlides):
         move = getRandomMove(board, lastMove)
@@ -306,8 +280,7 @@ def generateNewPuzzle(numSlides):
 
 
 def resetAnimation(board, allMoves):
-    # make all of the moves in allMoves in reverse.
-    revAllMoves = allMoves[:] # gets a copy of the list
+    revAllMoves = allMoves[:]
     revAllMoves.reverse()
 
     for move in revAllMoves:

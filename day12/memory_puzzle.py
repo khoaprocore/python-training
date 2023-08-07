@@ -256,6 +256,5 @@ def main():
             pygame.display.update()
             FPSCLOCK.tick(FPS)
 
-
 if __name__ == "__main__":
     main()
